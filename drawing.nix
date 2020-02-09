@@ -2,6 +2,8 @@
 , desktop-file-utils
 , file
 , gobject-introspection
+, pkgconfig
+, appstream-glib
 , meson
 , ninja
 , python3
@@ -19,6 +21,8 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     wrapGAppsHook
     gobject-introspection
+    pkgconfig
+    appstream-glib
     meson
     ninja
     python3
