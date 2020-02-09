@@ -1,10 +1,14 @@
 { stdenv
-, pkgconfig
+, desktop-file-utils
+, file
+, gobject-introspection
 , meson
 , ninja
 , python3
 , gtk3
+, wrapGAppsHook
 , gettext
+, glib
 }:
 
 stdenv.mkDerivation rec {
@@ -12,11 +16,30 @@ stdenv.mkDerivation rec {
   version = "0.4.10";
   src = stdenv.lib.cleanSource ./.;
   
-  nativeBuildInputs = [ 
+  nativeBuildInputs = [
+    wrapGAppsHook
+    gobject-introspection
     meson
     ninja
-    pkgconfig
+    python3
+    gtk3
     gettext
+    glib
+  ];
+
+  buildInputs = [
+    file
+    desktop-file-utils
+    gtk3
+  ];
+
+  postPatch = ''
+    chmod +x build-aux/meson/postinstall.py # patchShebangs requires executable file
+    patchShebangs build-aux/meson/postinstall.py
+  '';
+
+  propagatedBuildInputs = with python3.pkgs; [
+    pygobject3
   ];
 
   meta = with stdenv.lib; {
