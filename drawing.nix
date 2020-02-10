@@ -11,13 +11,14 @@
 , wrapGAppsHook
 , gettext
 , glib
+, python3Packages
 }:
 
 stdenv.mkDerivation rec {
   pname = "drawing";
   version = "0.4.10";
   src = stdenv.lib.cleanSource ./.;
-  
+
   nativeBuildInputs = [
     wrapGAppsHook
     gobject-introspection
@@ -29,12 +30,20 @@ stdenv.mkDerivation rec {
     gtk3
     gettext
     glib
+    python3Packages.wrapPython
   ];
 
   buildInputs = [
     file
     desktop-file-utils
     gtk3
+    python3
+    glib
+    gobject-introspection
+  ];
+
+  propagatedBuildInputs = with python3.pkgs; [
+    pygobject3
   ];
 
   postPatch = ''
@@ -42,9 +51,9 @@ stdenv.mkDerivation rec {
     patchShebangs build-aux/meson/postinstall.py
   '';
 
-  propagatedBuildInputs = with python3.pkgs; [
-    pygobject3
-  ];
+  postFixup = ''
+    wrapPythonPrograms
+  '';
 
   meta = with stdenv.lib; {
     description = "drawing";
